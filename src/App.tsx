@@ -14,16 +14,9 @@ function App() {
   const [visitedDays, setVisitedDays] = useState<number[]>([]);
   const [stateId, setStateId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadState();
-    // Set timeout to handle loading if it takes too long
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 5000);
-    
-    return () => clearTimeout(timeout);
   }, []);
 
   const loadState = async () => {
@@ -35,7 +28,6 @@ function App() {
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error loading state:', error);
-        setError('Unable to connect to database. Proceeding with local mode.');
         setLoading(false);
         return;
       }
@@ -56,14 +48,12 @@ function App() {
 
         if (insertError) {
           console.error('Error creating state:', insertError);
-          setError('Unable to save state. Running in offline mode.');
         } else if (newState) {
           setStateId(newState.id);
         }
       }
     } catch (err) {
       console.error('Error in loadState:', err);
-      setError('An error occurred. Proceeding in offline mode.');
     } finally {
       setLoading(false);
     }
@@ -112,7 +102,6 @@ function App() {
         <div className="text-center">
           <Heart className="w-16 h-16 text-red-500 mx-auto mb-4 fill-red-500 animate-pulse" />
           <p className="text-2xl font-semibold text-gray-700">Loading...</p>
-          {error && <p className="text-sm text-red-600 mt-4">{error}</p>}
         </div>
       </div>
     );
