@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase';
+import PasswordPage from './components/PasswordPage';
 import ProposalPage from './components/ProposalPage';
 import CalendarPage from './components/CalendarPage';
 import DayPage from './components/DayPage';
@@ -8,6 +9,7 @@ import { Heart } from 'lucide-react';
 type View = 'proposal' | 'calendar' | 'day';
 
 function App() {
+  const [passwordAuthenticated, setPasswordAuthenticated] = useState(false);
   const [view, setView] = useState<View>('proposal');
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [hasAccepted, setHasAccepted] = useState(false);
@@ -95,6 +97,10 @@ function App() {
     setView('calendar');
     setSelectedDay(null);
   };
+
+  if (!passwordAuthenticated) {
+    return <PasswordPage onAuthSuccess={() => setPasswordAuthenticated(true)} />;
+  }
 
   if (loading) {
     return (
